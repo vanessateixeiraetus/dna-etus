@@ -398,14 +398,18 @@
       <p class="lead muted">Só para o RH saber de quem são as respostas. Leva 20 segundos.</p>
       <div style="max-width:470px;margin-top:10px">
         <div class="field"><label for="candNome">Nome completo *</label><input id="candNome" type="text" autocomplete="off" oninput="identifyCheck()" placeholder="Seu nome"></div>
+        <div class="field"><label for="candCpf">CPF *</label><input id="candCpf" type="text" inputmode="numeric" autocomplete="off" maxlength="14" oninput="maskCpf(this);identifyCheck()" placeholder="000.000.000-00">
+          <div id="cpfHint" class="small" style="display:none;color:var(--coral);margin-top:6px">Digite um CPF válido (11 números).</div>
+        </div>
         <div class="field"><label for="candEmail">E-mail (opcional)</label><input id="candEmail" type="email" autocomplete="off" oninput="identifyCheck()" placeholder="voce@email.com"></div>
+        <div id="cpfBlock" style="display:none;margin-top:4px;padding:14px 16px;border-radius:12px;background:rgba(255,126,107,.08);border:1px solid rgba(255,126,107,.35);color:#FFC4B8;font-size:.9rem"></div>
         <label style="display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:.9rem;color:#CBD6EC;cursor:pointer">
           <input type="checkbox" id="candConsent" onchange="identifyCheck()" style="margin-top:3px;width:18px;height:18px;flex:0 0 auto;accent-color:#25D97A">
           <span>Autorizo o uso das minhas respostas para fins de avaliação interna, incluindo <b>análise automatizada por inteligência artificial</b>, conforme a LGPD. Os dados são usados apenas neste processo seletivo, tratados com confidencialidade, e não são compartilhados para outros fins.</span>
         </label>
       </div>
       <div class="btns" style="margin-top:26px">
-        <button class="btn btn-primary" id="identifyBtn" disabled onclick="beginExperience()">Começar
+        <button class="btn btn-primary" id="identifyBtn" disabled onclick="iniciarTeste()">Começar
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#08131f" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <button class="btn btn-ghost" onclick="go('s-cover')">Voltar</button>
@@ -1083,9 +1087,66 @@ function go(id){
   if(TEST_SCREENS.includes(id)) proctorOn(); else proctorOff();
 }
 function startExperience(){ state.inExperience=true; go('s-identify'); }
-function beginExperience(){ state._t1started=false; state._q2started=false; state.startTime=Date.now(); go('s-b1'); }
-/* Marca quanto tempo (em segundos) o candidato levou do início até o fim do teste. */
-function stampDuration(){ if(state.startTime && !state.durationSec){ state.durationSec=Math.round((Date.now()-state.startTime)/1000); } }
+function beginExperience(){
+  state._t1started=false; state._q2started=false;
+  state.startTime=Date.now();
+  state.startLabel=new Date().toLocaleString('pt-BR');   // data/hora de início
+  state.durationSec=0; state.endLabel='';
+  armLeaveGuard();                                        // avisa se tentar sair no meio
+  go('s-b1');
+}
+/* Marca a conclusão: data/hora de fim e tempo total (segundos) do início até o fim. */
+function stampDuration(){
+  if(state.startTime && !state.durationSec){
+    state.durationSec=Math.round((Date.now()-state.startTime)/1000);
+    state.endLabel=new Date().toLocaleString('pt-BR');
+    disarmLeaveGuard();
+  }
+}
+
+/* ===== "Não pode parar": avisa ao sair; se sair/recarregar, o teste zera ===== */
+function leaveGuard(e){ e.preventDefault(); e.returnValue=''; return ''; }
+function armLeaveGuard(){ window.addEventListener('beforeunload', leaveGuard); }
+function disarmLeaveGuard(){ window.removeEventListener('beforeunload', leaveGuard); }
+
+/* ===== CPF: máscara, validação e formatação ===== */
+function cpfDigits(s){ return (s||'').replace(/\D/g,''); }
+function maskCpf(el){
+  let v=cpfDigits(el.value).slice(0,11);
+  v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  el.value=v;
+}
+function fmtCpf(c){ c=cpfDigits(c); if(c.length!==11) return c||'—'; return c.slice(0,3)+'.'+c.slice(3,6)+'.'+c.slice(6,9)+'-'+c.slice(9); }
+function cpfValido(cpf){
+  cpf=cpfDigits(cpf);
+  if(cpf.length!==11 || /^(\d)\1{10}$/.test(cpf)) return false;
+  let s=0; for(let i=0;i<9;i++) s+=parseInt(cpf[i],10)*(10-i);
+  let d1=(s*10)%11; if(d1===10) d1=0; if(d1!==parseInt(cpf[9],10)) return false;
+  s=0; for(let i=0;i<10;i++) s+=parseInt(cpf[i],10)*(11-i);
+  let d2=(s*10)%11; if(d2===10) d2=0; return d2===parseInt(cpf[10],10);
+}
+/* Só está no "modo servidor" (Node) quando o endpoint é uma rota /api do nosso servidor. */
+function apiMode(){ return typeof DB_ENDPOINT==='string' && DB_ENDPOINT.indexOf('/api/')===0; }
+
+/* Antes de começar: confere no servidor se este CPF já fez o teste. */
+async function iniciarTeste(){
+  const btn=document.getElementById('identifyBtn');
+  if(btn.disabled) return;
+  const block=document.getElementById('cpfBlock'); if(block) block.style.display='none';
+  if(apiMode() && state.candCpf){
+    btn.disabled=true;
+    try{
+      const r=await fetch('/api/verificar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cpf:state.candCpf})});
+      const j=await r.json();
+      if(j && j.podeFazer===false){
+        if(block){ block.textContent='⚠ '+(j.motivo||'Este CPF já realizou o teste.')+' Se você precisa refazer, fale com o RH para liberar.'; block.style.display='block'; }
+        btn.disabled=false; return;
+      }
+    }catch(e){ /* se a checagem falhar, segue — o servidor ainda bloqueia no envio */ }
+    btn.disabled=false;
+  }
+  beginExperience();
+}
 /* Formata segundos como "12 min 34 s" (ou "1 h 05 min" quando passa de uma hora). */
 function fmtDur(sec){
   if(sec==null||sec==='') return '—';
@@ -1097,7 +1158,12 @@ function fmtDur(sec){
 function identifyCheck(){
   state.candNome=(document.getElementById('candNome').value||'').trim();
   state.candEmail=(document.getElementById('candEmail').value||'').trim();
-  const ok = state.candNome.length>=2 && document.getElementById('candConsent').checked;
+  const cpfEl=document.getElementById('candCpf');
+  state.candCpf = cpfEl ? cpfDigits(cpfEl.value) : '';
+  const cpfOk = cpfEl ? cpfValido(state.candCpf) : true;
+  const hint=document.getElementById('cpfHint');
+  if(hint) hint.style.display = (cpfEl && cpfEl.value.length>0 && !cpfOk) ? 'block' : 'none';
+  const ok = state.candNome.length>=2 && document.getElementById('candConsent').checked && cpfOk;
   document.getElementById('identifyBtn').disabled=!ok;
 }
 function startCaseStandalone(){ state.inExperience=false; go('s-case-intro'); }
@@ -1631,14 +1697,31 @@ function renderServerList(){
   const list=state.serverList||[];
   if(!list.length){ el.innerHTML='<p class="small muted">Nenhuma resposta no servidor ainda.</p>'; return; }
   el.innerHTML='<div class="small muted" style="margin-bottom:8px">Clique num colaborador para ver as respostas:</div>'+
-    list.map(function(c,i){ return '<button class="btn btn-ghost" style="margin:0 8px 8px 0" onclick="viewServer('+i+')">'+((c.nome||'Sem nome'))+' · '+((c.data||''))+'</button>'; }).join('');
+    list.map(function(c,i){
+      var label=(c.nome||'Sem nome')+' · '+(c.data||'')+(c.cpf?' · CPF '+fmtCpf(c.cpf):'');
+      var refazer = c.cpf ? '<button class="btn btn-ghost" style="margin:0 8px 8px 0;border-color:rgba(245,197,107,.45);color:#F5C56B" onclick="liberarRefazer('+i+')">Permitir refazer</button>' : '';
+      return '<div style="display:flex;gap:0;align-items:center;flex-wrap:wrap">'
+        +'<button class="btn btn-ghost" style="margin:0 8px 8px 0" onclick="viewServer('+i+')">'+label+'</button>'
+        +refazer+'</div>';
+    }).join('');
+}
+/* Avaliador libera um CPF para refazer o teste (a tentativa atual fica no histórico). */
+async function liberarRefazer(i){
+  var c=(state.serverList||[])[i]; if(!c || !c.cpf){ flashProctor('Esta resposta não tem CPF registrado.'); return; }
+  if(!confirm('Permitir que '+(c.nome||'esta pessoa')+' refaça o teste com o mesmo CPF? A resposta atual continua salva no histórico.')) return;
+  try{
+    var r=await fetch('/api/liberar-refazer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cpf:c.cpf})});
+    var j=await r.json();
+    if(j && j.ok) flashOK('Liberado! '+(c.nome||'A pessoa')+' já pode refazer o teste com o mesmo CPF.');
+    else flashProctor('Não consegui liberar. Verifique o login.');
+  }catch(e){ flashProctor('Não consegui liberar. Verifique o login.'); }
 }
 function deleteAll(){
   if(!listConfigured()){ flashProctor('Disponível apenas no modo servidor.'); return; }
   if(!confirm('Apagar TODAS as respostas do servidor? Isso não pode ser desfeito. Use só para limpar dados de teste.')) return;
   fetch(DB_LIST_URL,{method:'DELETE'}).then(function(r){return r.json();}).then(function(){ state.serverList=[]; renderServerList(); state.importedTranscript=null; state.importedMeta=null; state.importedAval=''; renderAnswers(); flashOK('Respostas apagadas.'); }).catch(function(){ flashProctor('Não consegui apagar. Verifique o login.'); });
 }
-function viewServer(i){ const c=(state.serverList||[])[i]; if(!c) return; state.importedTranscript=c.rows||[]; state.importedName=c.nome||'Colaborador'; state.importedMeta={data:c.data,email:c.email,indiceCase:c.indiceCase,indiceCase2:c.indiceCase2,integridade:c.integridade,tempoTotalSeg:c.tempoTotalSeg}; state.importedAval=c.avaliacaoIA||''; renderAnswers(); }
+function viewServer(i){ const c=(state.serverList||[])[i]; if(!c) return; state.importedTranscript=c.rows||[]; state.importedName=c.nome||'Colaborador'; state.importedMeta={data:c.data,inicio:c.inicio,email:c.email,cpf:c.cpf,indiceCase:c.indiceCase,indiceCase2:c.indiceCase2,integridade:c.integridade,tempoTotalSeg:c.tempoTotalSeg}; state.importedAval=c.avaliacaoIA||''; renderAnswers(); }
 function downloadDataFile(){
   const blob=new Blob([JSON.stringify(exportPayload())],{type:'application/json;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
@@ -1702,8 +1785,10 @@ function renderAnswers(){
   const m=state.importedMeta;
   if(m){
     head='<div class="casekpis" style="margin-bottom:18px">'
-      +'<div class="k"><b>'+(m.data||'—')+'</b><span>Data da resposta</span></div>'
-      +'<div class="k"><b>'+fmtDur(m.tempoTotalSeg)+'</b><span>Tempo total do teste</span></div>'
+      +(m.cpf?'<div class="k"><b>'+fmtCpf(m.cpf)+'</b><span>CPF</span></div>':'')
+      +'<div class="k"><b>'+(m.inicio||'—')+'</b><span>Início do preenchimento</span></div>'
+      +'<div class="k"><b>'+(m.data||'—')+'</b><span>Conclusão</span></div>'
+      +'<div class="k"><b>'+fmtDur(m.tempoTotalSeg)+'</b><span>Tempo de preenchimento</span></div>'
       +'<div class="k"><b>'+(m.indiceCase||'—')+'</b><span>Índice Case 1 (0–100)</span></div>'
       +'<div class="k"><b>'+(m.indiceCase2||'—')+'</b><span>Índice Case 2 (0–100)</span></div>'
       +'</div>';
@@ -1740,21 +1825,30 @@ function buildPayload(){
   const respostas=t.filter(function(p){return p[1]!=='';}).map(function(p){return {pergunta:p[0], resposta:p[1]};});
   return {
     app:'DNA_ETUS',
-    nome: state.candNome||'', email: state.candEmail||'',
-    data: new Date().toLocaleString('pt-BR'),
+    nome: state.candNome||'', email: state.candEmail||'', cpf: state.candCpf||'',
+    inicio: state.startLabel||'',                 // data/hora de início
+    data: state.endLabel || new Date().toLocaleString('pt-BR'),  // data/hora de conclusão
     rows: t,                 // [[rótulo, resposta], ...] — usado pela Área do Avaliador
     respostas: respostas,    // [{pergunta, resposta}] — formato tabela (planilha)
     indiceCase: state.caseIndex||'',
     indiceCase2: (state.case2Quality!=null)? Math.round(state.case2Quality*100):'',
-    tempoTotalSeg: state.durationSec||'',   // tempo total do teste, em segundos
+    tempoTotalSeg: state.durationSec||'',   // tempo de preenchimento, em segundos
     integridade: { tabAway: proctor.tabAway||0, pasteBlocked: proctor.pasteBlocked||0 }  // trocas de tela e colagens bloqueadas
   };
 }
 function submitToDatabase(){
   if(!dbConfigured()){ state.dbSent=false; return; }
   try{
-    fetch(DB_ENDPOINT, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(buildPayload())});
-    state.dbSent=true;
+    if(apiMode()){
+      // servidor próprio (mesma origem): dá para ler a resposta e saber se salvou
+      fetch(DB_ENDPOINT, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(buildPayload())})
+        .then(function(r){ state.dbSent=r.ok; })
+        .catch(function(){ state.dbSent=false; });
+      state.dbSent=true;
+    } else {
+      fetch(DB_ENDPOINT, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(buildPayload())});
+      state.dbSent=true;
+    }
   }catch(e){ state.dbSent=false; }
 }
 function setDbStatus(){
