@@ -20,12 +20,29 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'troque-esta-senha';
 /* ---------------- Avaliação por IA (Gemini) ---------------- */
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+
+/* ===== Áreas da ETUS para o cálculo de ADERÊNCIA (compatibilidade) =====
+   Para ACRESCENTAR uma área depois, é só copiar uma linha abaixo e trocar o
+   nome e a descrição. A IA passa a pontuar a compatibilidade com essa área
+   automaticamente. Ex.: ['Dados', 'analisa métricas e transforma números em decisões'] */
+const AREAS_ETUS = [
+  ['Aquisição', 'traz novos usuários (leads) por anúncios em Google, TikTok, Instagram e Facebook'],
+  ['Retenção',  'ativa os leads, mantém a base engajada e cria um relacionamento recorrente'],
+  ['Receita',   'monetiza a audiência com recomendações de produtos e anúncios']
+];
+const AREAS_TXT = AREAS_ETUS.map(function (a) { return '- ' + a[0] + ': ' + a[1]; }).join('\n');
+
 const PROMPT_IA =
-"Você é um avaliador(a) de RH experiente e imparcial. Abaixo estão as respostas de um(a) candidato(a) ao assessment DNA ETUS. Avalie SOMENTE com base nas evidências das respostas — não invente nada.\n\n" +
+"Você é um avaliador(a) de RH experiente e imparcial. Abaixo estão as respostas de um(a) candidato(a) ao assessment DNA ETUS. Avalie SOMENTE com base nas evidências das respostas, sem inventar nada.\n\n" +
 "Para cada competência, dê uma nota de 0 a 10 e uma justificativa curta citando trechos:\n" +
 "- Raciocínio lógico e analítico\n- Resolução de problemas\n- Priorização\n- Curiosidade / investigação\n- Comunicação (clareza e simplicidade)\n- Colaboração\n- Humildade intelectual\n- Foco em resultados\n\n" +
 "Regras: respostas vagas, genéricas, repetidas ou sem raciocínio recebem nota baixa (explique). Seja justo e baseie-se só nas evidências. Avalie o raciocínio e o posicionamento, nunca opiniões pessoais, políticas ou religiosas.\n\n" +
-"Ao final entregue: 1) PONTOS FORTES (até 3); 2) PONTOS A DESENVOLVER (até 3) com uma sugestão prática cada; 3) RESUMO em 3 linhas para o RH; 4) DEVOLUTIVA EMPÁTICA de 3 linhas para o(a) candidato(a).\n";
+"Ao final entregue, nesta ordem:\n" +
+"1) PONTOS FORTES (até 3);\n" +
+"2) PONTOS A DESENVOLVER (até 3) com uma sugestão prática cada;\n" +
+"3) ADERÊNCIA POR ÁREA: para CADA área abaixo, dê uma nota de 0 a 100 (%) de compatibilidade com base nas evidências das respostas e uma frase curta justificando. Depois indique a ÁREA DE MAIOR ENCAIXE. Áreas da ETUS:\n" + AREAS_TXT + "\n" +
+"4) RESUMO em 3 linhas para o RH;\n" +
+"5) DEVOLUTIVA EMPÁTICA de 3 linhas para o(a) candidato(a).\n";
 
 function respostasParaTexto(payload) {
   const rows = (payload && payload.rows) || [];
@@ -138,6 +155,15 @@ app.post('/api/respostas', async (req, res) => {
 app.get('/api/respostas', auth, async (req, res) => {
   try { res.json(await listRespostas()); }
   catch (e) { res.status(500).json({ ok: false, error: String(e) }); }
+});
+
+// Apagar TODAS as respostas (protegido) — usado para limpar dados de teste.
+app.delete('/api/respostas', auth, async (req, res) => {
+  try {
+    if (pool) await pool.query('DELETE FROM respostas');
+    else fileWrite([]);
+    res.json({ ok: true });
+  } catch (e) { res.status(500).json({ ok: false, error: String(e) }); }
 });
 
 // Teste rápido da IA (protegido) — verifica chave e modelo.
