@@ -344,7 +344,7 @@
             <div class="m"><b>~20</b><span>MINUTOS</span></div>
           </div>
           <div class="divider"></div>
-          <p class="small muted">Cada qualidade é observada <b style="color:var(--accent)">várias vezes</b>, em formatos diferentes. Um deslize não define o seu resultado — o conjunto sim.</p>
+          <p class="small muted">Cada qualidade é observada <b style="color:var(--accent)">várias vezes</b>, em formatos diferentes. Um deslize não define o seu resultado, o conjunto sim.</p>
         </div>
       </div>
     </section>
@@ -353,7 +353,7 @@
     <section class="screen" id="s-howitworks">
       <div class="eyebrow">Como funciona</div>
       <h2>Uma metodologia própria da ETUS</h2>
-      <p class="lead muted">Você não vai responder a um teste tradicional. Criamos uma forma própria de enxergar potencial — pensada para ser justa, prática e centrada em você.</p>
+      <p class="lead muted">Você não vai responder a um teste tradicional. Criamos uma forma própria de enxergar potencial, pensada para ser justa, prática e centrada em você.</p>
 
       <div class="howcard">
         <div class="how">
@@ -369,7 +369,7 @@
         <div class="how">
           <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2"><path d="M12 3v3M12 18v3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M3 12h3M18 12h3M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" stroke-linecap="round"/></svg></div>
           <b>Tecnologia que interpreta com cuidado</b>
-          <span>Usamos inteligência artificial para entender suas respostas abertas com profundidade e coerência — sempre a serviço de uma leitura justa.</span>
+          <span>Usamos inteligência artificial para entender suas respostas abertas com profundidade e coerência, sempre a serviço de uma leitura justa.</span>
         </div>
         <div class="how">
           <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg></div>
@@ -380,7 +380,7 @@
 
       <div class="note">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5C56B" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01" stroke-linecap="round"/></svg>
-        <div>Relaxe: não existe gabarito e ninguém está te avaliando por uma resposta isolada. Seja você mesmo(a) — é assim que a leitura fica mais fiel.</div>
+        <div>Relaxe: não existe gabarito e ninguém está te avaliando por uma resposta isolada. Seja você mesmo(a), é assim que a leitura fica mais fiel.</div>
       </div>
 
       <div class="btns" style="margin-top:26px">
@@ -416,17 +416,18 @@
     <section class="screen" id="s-b1">
       <div class="qhead"><span class="qbadge">Bloco 1</span><span class="qmeta">Aquecimento cognitivo · Lógica e raciocínio</span></div>
       <h2>Raciocínio rápido</h2>
-      <p class="muted small">Duas questões rápidas. Aqui olhamos velocidade e precisão — o cronômetro faz parte do desafio.</p>
+      <p class="muted small">Duas questões rápidas. Aqui olhamos velocidade e precisão, o cronômetro faz parte do desafio.</p>
 
-      <div class="qwrap" style="margin-top:20px">
-        <div class="qnum"><i>1</i> Sequência lógica</div>
+      <div class="qwrap" id="b1q1" style="margin-top:20px">
+        <div class="qnum"><i>1</i></div>
         <div class="timer"><span class="small muted">Tempo</span><div class="bar"><i id="t1bar"></i></div><div class="t" id="t1txt">45s</div></div>
         <div class="prompt-box">Qual número completa a sequência?<br><b style="font-size:1.2rem;letter-spacing:3px">2 · 6 · 12 · 20 · 30 · ?</b></div>
         <div class="opts" id="b1aopts"></div>
       </div>
 
-      <div class="qwrap">
-        <div class="qnum"><i>2</i> Regra de três</div>
+      <div class="qwrap" id="b1q2" style="opacity:.4;pointer-events:none">
+        <div class="qnum"><i>2</i></div>
+        <div class="timer"><span class="small muted">Tempo</span><div class="bar"><i id="t2bar"></i></div><div class="t" id="t2txt">45s</div></div>
         <div class="prompt-box">Uma equipe de <b>4 pessoas</b> envia <b>2.000 e-mails em 5 dias</b>, sempre no mesmo ritmo.<br>Quantos e-mails <b>6 pessoas</b> enviariam em <b>10 dias</b>?</div>
         <div class="opts" id="b1bopts"></div>
       </div>
@@ -443,17 +444,17 @@
       <h2>O que você faria?</h2>
 
       <div class="qwrap" style="margin-top:18px">
-        <div class="qnum"><i>1</i> Cliente insatisfeito</div>
+        <div class="qnum"><i>1</i></div>
         <div class="prompt-box"><div class="who">Situação</div>Um cliente importante recebeu um relatório com um <b>erro de dados</b> que passou pela equipe. Ele está furioso e ameaça cancelar o contrato ainda hoje.<br><br><b>Qual é o seu primeiro passo e como conduz isso até o fim?</b></div>
         <textarea id="b3atext" placeholder="Descreva seu raciocínio: o que faz primeiro, o que comunica e para quem..." oninput="dualEnable()"></textarea>
-        <div class="ta-meta"><span>A IA avalia estrutura, clareza e priorização — não existe resposta certa.</span><span id="b3ameta">0 caracteres</span></div>
+        <div class="ta-meta"><span></span><span id="b3ameta">0 caracteres</span></div>
       </div>
 
       <div class="qwrap">
-        <div class="qnum"><i>2</i> Conflito entre áreas</div>
+        <div class="qnum"><i>2</i></div>
         <div class="prompt-box"><div class="who">Situação</div>Duas áreas discordam sobre a prioridade de uma entrega e o clima esquentou. Você precisa <b>destravar</b> a situação para o trabalho fluir.<br><br><b>Como você age?</b></div>
         <textarea id="b3btext" placeholder="Conte como você aproximaria as pessoas e chegaria a uma decisão..." oninput="dualEnable()"></textarea>
-        <div class="ta-meta"><span>Avaliamos empatia, diplomacia e capacidade de decidir sob tensão.</span><span id="b3bmeta">0 caracteres</span></div>
+        <div class="ta-meta"><span></span><span id="b3bmeta">0 caracteres</span></div>
       </div>
 
       <div class="footer-nav">
@@ -466,7 +467,7 @@
     <section class="screen" id="s-b4">
       <div class="qhead"><span class="qbadge">Bloco 3</span><span class="qmeta">Priorização · Organize por importância</span></div>
       <h2>O que vem primeiro?</h2>
-      <p class="muted small">Sem múltipla escolha. Coloque cada lista na ordem em que você agiria — use as setas.</p>
+      <p class="muted small">Sem múltipla escolha. Coloque cada lista na ordem em que você agiria, use as setas.</p>
 
       <div class="qwrap" style="margin-top:18px">
         <div class="qnum"><i>1</i> Sua manhã tem 5 urgências</div>
@@ -490,15 +491,15 @@
       <h2>Antes de resolver, investigue</h2>
 
       <div class="qwrap" style="margin-top:18px">
-        <div class="qnum"><i>1</i> Queda de indicadores</div>
+        <div class="qnum"><i>1</i></div>
         <div class="prompt-box"><div class="who">Problema (incompleto de propósito)</div>Os indicadores de um cliente <b>caíram 30%</b> no último mês. Antes de propor solução, você pode perguntar.</div>
-        <p class="invhint">Selecione as perguntas que você faria. <b style="color:var(--accent-2)">Quanto melhores, maior a pontuação.</b></p>
+        <p class="invhint">Selecione as perguntas que você faria.</p>
         <div class="invgrid" id="inv_b5a"></div>
         <div class="invcount" id="cnt_b5a">Selecionadas: <b>0</b></div>
       </div>
 
       <div class="qwrap">
-        <div class="qnum"><i>2</i> Novo processo na sua área</div>
+        <div class="qnum"><i>2</i></div>
         <div class="prompt-box"><div class="who">Problema</div>A liderança quer implantar um <b>novo processo</b> na sua área. Antes de opinar, você pode perguntar.</div>
         <p class="invhint">Quais perguntas ajudam a decidir bem?</p>
         <div class="invgrid" id="inv_b5b"></div>
@@ -517,7 +518,7 @@
       <h2>O que os números dizem?</h2>
 
       <div class="qwrap" style="margin-top:18px">
-        <div class="qnum"><i>1</i> Tendência de engajamento</div>
+        <div class="qnum"><i>1</i></div>
         <div class="chartwrap">
           <div class="ctitle">Engajamento mensal de um cliente (interações em mil)</div>
           <div class="csub">Investimento em mídia constante nos 6 meses.</div>
@@ -527,7 +528,7 @@
       </div>
 
       <div class="qwrap">
-        <div class="qnum"><i>2</i> Onde está o gargalo</div>
+        <div class="qnum"><i>2</i></div>
         <div class="chartwrap">
           <div class="ctitle">Funil de conversão de uma campanha</div>
           <div class="csub">Do total de visitantes até a compra.</div>
@@ -548,17 +549,17 @@
       <h2>Dilemas silenciosos</h2>
 
       <div class="qwrap" style="margin-top:18px">
-        <div class="qnum"><i>1</i> O erro que te favorece</div>
+        <div class="qnum"><i>1</i></div>
         <div class="prompt-box">Você percebe um <b>erro em um relatório</b> que, por acaso, <b>favorece os números da sua equipe</b>. Ninguém mais percebeu, e corrigir vai expor uma falha do time.<br><br>O que você faz?</div>
         <div class="opts" id="b9aopts"></div>
         <div id="b9awhy" style="display:none;margin-top:14px;animation:pop .4s ease">
-          <label class="small muted" style="display:block;margin-bottom:8px">E o mais importante — <b style="color:var(--accent)">por quê?</b></label>
+          <label class="small muted" style="display:block;margin-bottom:8px">E o mais importante, <b style="color:var(--accent)">por quê?</b></label>
           <textarea id="b9atext" placeholder="Explique o raciocínio da sua escolha..." oninput="dualEnable()"></textarea>
         </div>
       </div>
 
       <div class="qwrap">
-        <div class="qnum"><i>2</i> A informação privilegiada</div>
+        <div class="qnum"><i>2</i></div>
         <div class="prompt-box">Um colega te passa, sem querer, uma informação que poderia te dar <b>vantagem</b> numa avaliação interna. Ninguém saberá se você usar.<br><br>O que você faz?</div>
         <div class="opts" id="b9bopts"></div>
         <div id="b9bwhy" style="display:none;margin-top:14px;animation:pop .4s ease">
@@ -588,7 +589,7 @@
       <div class="eyebrow">Seu resultado</div>
       <div class="cr-hero">
         <h2 style="margin-bottom:8px">Obrigado por compartilhar o seu jeito de pensar 💚</h2>
-        <p style="color:#CBD6EC;max-width:66ch">Este é um retrato do que percebemos ao longo da experiência. Não é uma nota de aprovação — é um espelho, feito com cuidado, para te ajudar a enxergar as suas forças e as áreas onde você pode crescer. Leia com leveza: todo DNA está sempre em evolução.</p>
+        <p style="color:#CBD6EC;max-width:66ch">Este é um retrato do que percebemos ao longo da experiência. Não é uma nota de aprovação, é um espelho, feito com cuidado, para te ajudar a enxergar as suas forças e as áreas onde você pode crescer. Leia com leveza: todo DNA está sempre em evolução.</p>
       </div>
       <div id="dbStatus" class="note" style="display:none;background:rgba(37,217,122,.08);border-color:rgba(37,217,122,.28);color:#CFF6EE;margin-top:0;margin-bottom:18px"></div>
       <div id="sendBox" style="display:none;margin-bottom:18px"></div>
@@ -600,13 +601,13 @@
 
       <div class="cr-block">
         <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5C56B" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10" stroke-linecap="round"/><path d="M12 8v4l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg> Onde você pode crescer</h3>
-        <p class="small muted" style="margin:-8px 0 16px">Ninguém é completo em tudo — e tudo bem. Estas são frentes com espaço para desenvolvimento, com uma ideia prática para começar.</p>
+        <p class="small muted" style="margin:-8px 0 16px">Ninguém é completo em tudo, e tudo bem. Estas são frentes com espaço para desenvolvimento, com uma ideia prática para começar.</p>
         <div id="crDev"></div>
       </div>
 
       <div class="cr-block" style="background:linear-gradient(120deg,rgba(37,217,122,.1),rgba(18,176,232,.06))">
         <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2"><path d="M13 2L4.5 12.5H11l-1 7.5L19.5 9H13z"/></svg> Uma palavra final</h3>
-        <p style="color:#CBD6EC;max-width:66ch">Você mostrou uma forma de pensar clara e orientada a resolver problemas. Continue exercitando a comunicação das suas decisões e a colaboração — são os pontos que mais vão multiplicar o seu impacto. O que define a sua trajetória não é só o que você já sabe, mas como você escolhe evoluir a partir daqui. 🌱</p>
+        <p style="color:#CBD6EC;max-width:66ch">Você mostrou uma forma de pensar clara e orientada a resolver problemas. Continue exercitando a comunicação das suas decisões e a colaboração, são os pontos que mais vão multiplicar o seu impacto. O que define a sua trajetória não é só o que você já sabe, mas como você escolhe evoluir a partir daqui. 🌱</p>
       </div>
 
       <p class="disclaimer">Resultado ilustrativo, gerado para demonstração. Uma versão completa e técnica deste perfil é gerada separadamente para o time de RH.</p>
@@ -623,7 +624,7 @@
       <p class="lead muted">Para os próximos desafios fazerem sentido, entenda rapidamente onde você está e o que fazemos.</p>
 
       <h3 style="margin-top:22px">Quem somos e o que fazemos</h3>
-      <p class="cover-p" style="max-width:74ch">A ETUS atua no mercado de Mídia Programática e recomendação de produtos financeiros (como cartões de crédito e empréstimos). Nossa operação é sustentada por três pilares de Performance:</p>
+      <p class="cover-p" style="max-width:74ch">A ETUS atua no mercado de Mídia Programática e recomendação de produtos financeiros (como cartões de crédito e empréstimos), e nossa operação é sustentada por três pilares de Performance:</p>
       <div class="howcard tri">
         <div class="how"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></div><b>Aquisição</b><span>Traz novos usuários (leads) por anúncios em Google, TikTok, Instagram e Facebook.</span></div>
         <div class="how"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z"/></svg></div><b>Retenção</b><span>Ativa os leads, mantém a base engajada e cria um relacionamento recorrente.</span></div>
@@ -642,7 +643,7 @@
     <section class="screen" id="s-case2-intro">
       <div class="eyebrow">Case 2</div>
       <h2>Segundo desafio prático</h2>
-      <p class="lead muted">Mais um desafio de raciocínio. São <b style="color:var(--accent);font-weight:600">12 perguntas abertas</b> em 6 temas. Não existe resposta certa — queremos ver o seu raciocínio.</p>
+      <p class="lead muted">Mais um desafio de raciocínio. São <b style="color:var(--accent);font-weight:600">12 perguntas abertas</b> em 6 temas. Não existe resposta certa, queremos ver o seu raciocínio.</p>
       <div class="goldbox" style="background:rgba(37,217,122,.07);border-color:rgba(37,217,122,.25);color:#CFF6EE;margin-top:18px">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16h.01" stroke-linecap="round"/></svg>
         <div>Responda com calma e explique o <b>porquê</b> das suas escolhas. Respostas vagas ou sem raciocínio contam menos.</div>
@@ -664,7 +665,7 @@
       <p class="muted small" id="case2Progress" style="margin-bottom:2px">Respondidas: <b>0</b> de 12</p>
       <p class="small" style="color:var(--muted-2);margin-bottom:6px">🔒 Copiar e colar ficam desativados e trocas de tela são registradas.</p>
 
-      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 1 — Visão de funil e conexão de áreas</h4>
+      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 1: Visão de funil e conexão de áreas</h4>
       <p class="small muted" style="margin-bottom:10px">Como a atração de clientes se conecta com o engajamento contínuo.</p>
       <div class="qwrap"><div class="qnum"><i>1</i></div>
         <div class="prompt-box">Uma empresa investe bastante em anúncios para trazer novas pessoas ao site, mas quase ninguém volta depois do primeiro dia. Na sua visão, qual pode ser o motivo desse desinteresse logo após o primeiro contato?</div>
@@ -673,7 +674,7 @@
         <div class="prompt-box">Se o time de Aquisição trouxer milhares de novos contatos para a base hoje, o que você faria primeiro para garantir que essas pessoas continuem interessadas nas nossas mensagens nos próximos meses?</div>
         <textarea id="r2" oninput="case2Check()" placeholder="Seu plano..."></textarea></div>
 
-      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 2 — Raciocínio lógico e segmentação (E × OU)</h4>
+      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 2: Raciocínio lógico e segmentação (E × OU)</h4>
       <p class="small muted" style="margin-bottom:10px">Criar filtros e entender comportamento de audiência.</p>
       <div class="qwrap"><div class="qnum"><i>3</i></div>
         <div class="prompt-box">Você precisa enviar uma mensagem promocional apenas para clientes <b>altamente engajados</b>. Quais critérios ou comportamentos você usaria para definir quem deve (e quem não deve) receber esse e-mail?</div>
@@ -682,7 +683,7 @@
         <div class="prompt-box">Pense em dois grupos:<br>• <b>Grupo A:</b> usaram o app nos últimos 7 dias <b>E</b> fizeram uma compra.<br>• <b>Grupo B:</b> usaram o app nos últimos 7 dias <b>OU</b> fizeram uma compra.<br>Qual grupo terá um público maior? Explique o porquê com suas palavras.</div>
         <textarea id="r4" oninput="case2Check()" placeholder="Sua resposta e o porquê..."></textarea></div>
 
-      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 3 — Comunicação, copywriting e testes</h4>
+      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 3: Comunicação, copywriting e testes</h4>
       <p class="small muted" style="margin-bottom:10px">O que faz alguém abrir um e-mail e clicar numa oferta.</p>
       <div class="qwrap"><div class="qnum"><i>5</i></div>
         <div class="prompt-box">Você precisa enviar um e-mail recomendando um novo cartão de crédito. Escreva <b>duas opções de assunto</b> (título do e-mail) para testar qual chama mais a atenção e explique a estratégia por trás de cada uma.</div>
@@ -691,7 +692,7 @@
         <div class="prompt-box">Se você envia dois e-mails diferentes para testar qual performa melhor, mas um é enviado às <b>8h de segunda</b> e o outro às <b>22h de domingo</b>, o resultado do teste será justo? Por quê?</div>
         <textarea id="r6" oninput="case2Check()" placeholder="Sua resposta..."></textarea></div>
 
-      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 4 — Análise de dados e solução de problemas</h4>
+      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 4: Análise de dados e solução de problemas</h4>
       <p class="small muted" style="margin-bottom:10px">Interpretar métricas básicas e agir diante de imprevistos.</p>
       <div class="qwrap"><div class="qnum"><i>7</i></div>
         <div class="prompt-box">A <b>taxa de abertura</b> mede quantos abriram o e-mail; a <b>taxa de clique</b> mede quantos clicaram no link interno. Se um e-mail teve abertura altíssima, mas quase nenhum clique no conteúdo, o que pode ter dado errado?</div>
@@ -700,7 +701,7 @@
         <div class="prompt-box">Você programou uma mensagem importante para um grupo de clientes. No dia seguinte, percebeu que <b>menos da metade da base</b> recebeu a mensagem. Quais hipóteses você levantaria para investigar o que aconteceu?</div>
         <textarea id="r8" oninput="case2Check()" placeholder="Suas hipóteses..."></textarea></div>
 
-      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 5 — Priorização, organização e processos</h4>
+      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 5: Priorização, organização e processos</h4>
       <p class="small muted" style="margin-bottom:10px">Atenção aos detalhes nas operações do dia a dia.</p>
       <div class="qwrap"><div class="qnum"><i>9</i></div>
         <div class="prompt-box">Antes de apertar o botão <b>"Enviar"</b> em uma campanha de e-mail para milhares de pessoas, qual checklist pessoal você faria para garantir que nenhum erro seja disparado?</div>
@@ -709,7 +710,7 @@
         <div class="prompt-box">Três tarefas no dia:<br>• Ajustar um erro de digitação em um e-mail que sai daqui a 3 dias;<br>• Resolver uma automação que está disparando e-mails <b>duplicados agora</b>;<br>• Montar o relatório de resultados da semana passada.<br>Em qual ordem você executaria e por quê?</div>
         <textarea id="r10" oninput="case2Check()" placeholder="Sua ordem e o porquê..."></textarea></div>
 
-      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 6 — Postura, adaptabilidade e perfil</h4>
+      <h4 style="color:var(--accent);letter-spacing:.5px;margin:22px 0 2px;font-size:.82rem;text-transform:uppercase">Tópico 6: Postura, adaptabilidade e perfil</h4>
       <p class="small muted" style="margin-bottom:10px">Como a pessoa lida com ferramentas novas e aprendizado contínuo.</p>
       <div class="qwrap"><div class="qnum"><i>11</i></div>
         <div class="prompt-box">Como você costuma se organizar para aprender a mexer em um sistema ou ferramenta interna complexa que nunca viu antes?</div>
@@ -751,7 +752,7 @@
 
       <div class="note">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5C56B" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01" stroke-linecap="round"/></svg>
-        <div>São 9 perguntas abertas. Não se preocupe em acertar — respostas vagas ou sem raciocínio contam menos do que uma linha de pensamento clara. Capriche em explicar o <b>porquê</b>.</div>
+        <div>São 9 perguntas abertas. Não se preocupe em acertar, respostas vagas ou sem raciocínio contam menos do que uma linha de pensamento clara. Capriche em explicar o <b>porquê</b>.</div>
       </div>
 
       <div class="btns" style="margin-top:24px">
@@ -774,7 +775,7 @@
 
       <div class="qwrap" style="margin-top:16px">
         <div class="qnum"><i>1</i> Hipóteses</div>
-        <div class="prompt-box">Liste o <b>maior número possível de hipóteses</b> para o anúncio não estar vendendo. Não se preocupe em acertar — quanto mais hipóteses relevantes, melhor.</div>
+        <div class="prompt-box">Liste o <b>maior número possível de hipóteses</b> para o anúncio não estar vendendo. Não se preocupe em acertar, quanto mais hipóteses relevantes, melhor.</div>
         <textarea id="cq1" placeholder="Ex.: preço alto, público errado, site lento, fotos ruins, frete caro... (uma por linha)" oninput="caseCheck()"></textarea>
       </div>
 
@@ -846,15 +847,15 @@
     <section class="screen" id="s-case-report">
       <div class="eyebrow">Case concluído</div>
       <div class="cr-hero">
-        <h2 style="margin-bottom:8px">Muito bem — você chegou até o fim! 💚</h2>
+        <h2 style="margin-bottom:8px">Muito bem, você chegou até o fim! 💚</h2>
         <p style="color:#CBD6EC;max-width:66ch">Este case não tinha resposta certa. Ele foi feito para revelar como você pensa diante de um problema novo, com poucas informações. Aqui vai uma devolutiva carinhosa do que percebemos no seu raciocínio.</p>
       </div>
       <div id="caseCandNote" class="note" style="display:none;margin-top:0;margin-bottom:18px"></div>
 
       <div class="cr-block">
         <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.9 5.7 21l2.3-7.2-6-4.4h7.6z"/></svg> O que brilhou em você</h3>
-        <div class="cr-item pos"><div class="dot">💡</div><div><b>Você gera várias hipóteses</b><p>Diante de um problema aberto, você não travou numa só explicação — considerou vários caminhos possíveis. Isso é valioso em qualquer contexto onde o problema quase nunca é óbvio.</p></div></div>
-        <div class="cr-item pos"><div class="dot">🔍</div><div><b>Você investiga antes de agir</b><p>Você quis entender o contexto e fazer boas perguntas antes de propor soluções — sinal de curiosidade e cuidado.</p></div></div>
+        <div class="cr-item pos"><div class="dot">💡</div><div><b>Você gera várias hipóteses</b><p>Diante de um problema aberto, você não travou numa só explicação, considerou vários caminhos possíveis. Isso é valioso em qualquer contexto onde o problema quase nunca é óbvio.</p></div></div>
+        <div class="cr-item pos"><div class="dot">🔍</div><div><b>Você investiga antes de agir</b><p>Você quis entender o contexto e fazer boas perguntas antes de propor soluções, sinal de curiosidade e cuidado.</p></div></div>
         <div class="cr-item pos"><div class="dot">🧪</div><div><b>Você pensa em testar</b><p>Você demonstrou entender que decisões boas nascem de testes e dados, e não de achismos. Essa é a mentalidade certa para resolver problemas de verdade.</p></div></div>
       </div>
 
@@ -908,18 +909,9 @@
     <section class="screen" id="s-answers">
       <div class="eyebrow">Respostas do avaliado · RH / Gestor</div>
       <div class="rep-head">
-        <div class="who"><span class="small muted">Transcrição de</span><b id="answersName">Colaborador Exemplo</b><div class="small muted">Leia e avalie manualmente (a IA entra na versão de produção)</div></div>
+        <div class="who"><span class="small muted">Transcrição de</span><b id="answersName">Colaborador Exemplo</b><div class="small muted">A IA avalia automaticamente cada colaborador ao terminar o teste.</div></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="copyForChatGPT()">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#08131f" stroke-width="2.4"><path d="M9 3h6l1 4H8zM7 7h10l1 12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Copiar para avaliar no ChatGPT
-          </button>
-          <label class="btn btn-ghost" style="cursor:pointer">
-            ⬆ Importar respostas do colaborador
-            <input type="file" accept=".json,application/json" onchange="importAnswersFile(this)" style="display:none">
-          </label>
-          <button class="btn btn-ghost" onclick="downloadTranscript()">⬇ Baixar (.txt)</button>
-          <button class="btn btn-ghost" onclick="clearImport()">Limpar</button>
+          <button class="btn btn-ghost" style="border-color:rgba(255,126,107,.4);color:#FF9c8c" onclick="deleteAll()">🗑 Apagar respostas (teste)</button>
         </div>
       </div>
       <div style="margin:12px 0 4px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
@@ -931,7 +923,7 @@
       </div>
       <div id="serverList" style="margin-bottom:8px"></div>
       <div id="answersBody" style="margin-top:10px"></div>
-      <p class="disclaimer">Com o servidor ligado, as respostas dos colaboradores são carregadas aqui automaticamente. Sem servidor, use "Importar respostas" com o arquivo que o colaborador enviar.</p>
+      <p class="disclaimer">Com o servidor ligado, as respostas dos colaboradores são carregadas aqui automaticamente, já com a avaliação da IA.</p>
     </section>
 
     <!-- ============ LOGIN (avaliador) ============ -->
@@ -943,7 +935,7 @@
         <div class="field">
           <label for="accessCode">Código de acesso</label>
           <input id="accessCode" type="password" placeholder="••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')tryLogin()">
-          <div class="loginhint">Demonstração — use o código <b style="color:var(--accent)">ETUS2026</b></div>
+          <div class="loginhint">Demonstração: use o código <b style="color:var(--accent)">ETUS2026</b></div>
           <div class="loginerr" id="loginErr">Código inválido. Tente novamente.</div>
         </div>
         <div class="btns" style="margin-top:18px">
@@ -1043,7 +1035,7 @@
     </section>
 
   </div>
-  <p style="text-align:center;color:var(--muted-2);font-size:.74rem;margin-top:18px">DNA ETUS · Protótipo conceitual — Assessment proprietário de potencial e compatibilidade</p>
+  <p style="text-align:center;color:var(--muted-2);font-size:.74rem;margin-top:18px">DNA ETUS · Protótipo conceitual · Assessment proprietário de potencial e compatibilidade</p>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -1091,7 +1083,17 @@ function go(id){
   if(TEST_SCREENS.includes(id)) proctorOn(); else proctorOff();
 }
 function startExperience(){ state.inExperience=true; go('s-identify'); }
-function beginExperience(){ state._t1started=false; go('s-b1'); }
+function beginExperience(){ state._t1started=false; state._q2started=false; state.startTime=Date.now(); go('s-b1'); }
+/* Marca quanto tempo (em segundos) o candidato levou do início até o fim do teste. */
+function stampDuration(){ if(state.startTime && !state.durationSec){ state.durationSec=Math.round((Date.now()-state.startTime)/1000); } }
+/* Formata segundos como "12 min 34 s" (ou "1 h 05 min" quando passa de uma hora). */
+function fmtDur(sec){
+  if(sec==null||sec==='') return '—';
+  sec=parseInt(sec,10); if(isNaN(sec)) return '—';
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+  if(h>0) return h+' h '+String(m).padStart(2,'0')+' min';
+  return m+' min '+String(s).padStart(2,'0')+' s';
+}
 function identifyCheck(){
   state.candNome=(document.getElementById('candNome').value||'').trim();
   state.candEmail=(document.getElementById('candEmail').value||'').trim();
@@ -1193,22 +1195,48 @@ function pickMCQ(id,i){
   mcqSel[id]=i;
   const wrap=document.getElementById(id+'opts');
   [...wrap.children].forEach((c,ci)=>c.classList.toggle('sel',ci===i));
-  if(id==='b1a'||id==='b1b') { if(mcqSel.b1a!=null && mcqSel.b1b!=null){ document.getElementById('b1next').disabled=false; stopTimer1(); } }
+  if(id==='b1a'){ stopTimer1(); }   /* responde q1 -> para o cronômetro 1 e libera q2 */
+  if(id==='b1b'){ stopTimer2(); }   /* responde q2 -> para o cronômetro 2 */
+  if(id==='b1a'||id==='b1b') { if(mcqSel.b1a!=null && mcqSel.b1b!=null){ document.getElementById('b1next').disabled=false; } }
   if(id==='b6a'||id==='b6b') { if(mcqSel.b6a!=null && mcqSel.b6b!=null) document.getElementById('b6next').disabled=false; }
   if(id==='b9a'){ document.getElementById('b9awhy').style.display='block'; dualEnable(); }
   if(id==='b9b'){ document.getElementById('b9bwhy').style.display='block'; dualEnable(); }
 }
 
-/* ============ TIMER (bloco 1) ============ */
-let t1int=null,t1left=45;
+/* ============ CRONÔMETRO — Bloco 1 (uma contagem por questão) ============
+   Cada questão tem seu próprio cronômetro. Se o tempo da questão 1 acabar,
+   a questão 2 é liberada automaticamente. Se o tempo da questão 2 acabar,
+   o candidato é levado automaticamente para o Bloco 2 (s-b3). */
+const B1_SECS=45;
+let t1int=null, t2int=null;
+
 function startTimer1(){
-  state._t1started=true; t1left=45;
+  state._t1started=true;
   const bar=document.getElementById('t1bar'), txt=document.getElementById('t1txt');
-  bar.style.width='100%'; txt.textContent='45s'; clearInterval(t1int);
-  t1int=setInterval(()=>{ t1left--; bar.style.width=(t1left/45*100)+'%'; txt.textContent=t1left+'s';
-    if(t1left<=0){ stopTimer1(); document.getElementById('b1next').disabled=false; } },1000);
+  let left=B1_SECS; bar.style.width='100%'; txt.textContent=B1_SECS+'s';
+  clearInterval(t1int);
+  t1int=setInterval(()=>{
+    left--; bar.style.width=(Math.max(left,0)/B1_SECS*100)+'%'; txt.textContent=Math.max(left,0)+'s';
+    if(left<=0){ clearInterval(t1int); activateQ2(); }
+  },1000);
 }
-function stopTimer1(){ clearInterval(t1int); }
+/* Encerra a questão 1 (por resposta ou tempo) e libera a questão 2. */
+function stopTimer1(){ clearInterval(t1int); activateQ2(); }
+
+function activateQ2(){
+  if(state._q2started) return; state._q2started=true;
+  const q1=document.getElementById('b1q1'); if(q1) q1.style.pointerEvents='none';
+  const q2=document.getElementById('b1q2'); if(q2){ q2.style.opacity='1'; q2.style.pointerEvents='auto'; }
+  const bar=document.getElementById('t2bar'), txt=document.getElementById('t2txt');
+  let left=B1_SECS; if(bar){ bar.style.width='100%'; } if(txt){ txt.textContent=B1_SECS+'s'; }
+  clearInterval(t2int);
+  t2int=setInterval(()=>{
+    left--; if(bar) bar.style.width=(Math.max(left,0)/B1_SECS*100)+'%'; if(txt) txt.textContent=Math.max(left,0)+'s';
+    if(left<=0){ clearInterval(t2int); finishBlock('s-b3'); }
+  },1000);
+}
+/* Encerra a questão 2 (por resposta ou tempo). */
+function stopTimer2(){ clearInterval(t2int); }
 
 /* ============ TEXTAREAS: enable dependentes ============ */
 function filled(id){ const el=document.getElementById(id); return el && el.value.trim().length>=10; }
@@ -1302,12 +1330,12 @@ const TRAININGS=[
 ];
 const CR_STRENGTHS=[
   ["🧭","Você pensa de forma estruturada","Diante de um problema, você organiza o raciocínio antes de agir e busca a causa, não só o sintoma. Isso te torna confiável em situações complexas."],
-  ["🎯","Você mira no que importa","Ao priorizar, você reconhece bem o que gera mais impacto e o que pode esperar — uma habilidade que poupa tempo e evita retrabalho."],
+  ["🎯","Você mira no que importa","Ao priorizar, você reconhece bem o que gera mais impacto e o que pode esperar, uma habilidade que poupa tempo e evita retrabalho."],
   ["🔍","Você é curioso(a) e investiga","Antes de responder, você faz boas perguntas. Essa curiosidade é o que separa boas soluções de respostas apressadas."]
 ];
 const CR_DEV=[
   ["🗣️","Comunicar as suas decisões","Você decide bem, mas às vezes a explicação do porquê fica só na sua cabeça.","Experimente: ao concluir algo, escreva em 3 linhas o que decidiu e por quê, e compartilhe com o time."],
-  ["🤝","Trazer mais gente junto","Você tem autonomia forte — e isso é ótimo. O próximo passo é delegar e envolver mais pessoas nas soluções.","Experimente: na próxima tarefa, escolha uma parte para delegar e acompanhe, em vez de fazer sozinho(a)."]
+  ["🤝","Trazer mais gente junto","Você tem autonomia forte, e isso é ótimo. O próximo passo é delegar e envolver mais pessoas nas soluções.","Experimente: na próxima tarefa, escolha uma parte para delegar e acompanhe, em vez de fazer sozinho(a)."]
 ];
 
 /* candidate report */
@@ -1441,6 +1469,7 @@ function finalizeCase(){
   state.caseIndex=Math.max(10,Math.round(state.caseQuality*100));
   state.caseHip=countItems('cq1'); state.caseQ=Math.min(countItems('cq3'),10);
   clearInterval(caseTimerInt); go('s-proc-case');
+  if(!state.inExperience) stampDuration();   /* fim do teste no fluxo de case único */
   const steps=["Lendo suas hipóteses…","Avaliando a priorização…","Analisando as perguntas que você faria…","Medindo clareza e simplificação…","Montando a leitura de aptidão…"];
   const list=document.getElementById('procListCase'); let i=0; list.textContent=steps[0];
   const int=setInterval(()=>{ i++; if(i<steps.length) list.textContent=steps[i]; else { clearInterval(int); go(state.inExperience?'s-case2-intro':'s-case-report'); } },700);
@@ -1493,7 +1522,7 @@ function renderCaseCandidate(){
   const flags=state.caseFlags||[]; const ov=state.caseQuality ?? 1;
   if(flags.length>=2 || ov<0.45){
     box.style.display='flex';
-    box.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5C56B" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01" stroke-linecap="round"/></svg><div><b>Um lembrete gentil:</b> em algumas respostas percebemos texto muito curto ou sem desenvolvimento. Quando isso acontece, a gente não consegue enxergar o seu raciocínio — e o resultado acaba não representando o seu potencial de verdade. Se puder, vale refazer com calma, explicando o porquê de cada escolha. 💚</div>';
+    box.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5C56B" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01" stroke-linecap="round"/></svg><div><b>Um lembrete gentil:</b> em algumas respostas percebemos texto muito curto ou sem desenvolvimento. Quando isso acontece, a gente não consegue enxergar o seu raciocínio, e o resultado acaba não representando o seu potencial de verdade. Se puder, vale refazer com calma, explicando o porquê de cada escolha. 💚</div>';
   } else box.style.display='none';
 }
 
@@ -1516,6 +1545,7 @@ function finalizeCase2(){
   let sum=0; const flags=[];
   CASE2_FIELDS.forEach(id=>{ const q=answerQuality(document.getElementById(id).value); sum+=q; if(q<0.3) flags.push(CASE2_LABELS[id]); });
   state.case2Quality=sum/CASE2_FIELDS.length; state.case2Flags=flags;
+  stampDuration();   /* fim do teste completo: registra o tempo total antes de enviar */
   submitToDatabase();
   clearInterval(case2TimerInt); go('s-proc-case');
   const steps=["Lendo suas respostas do case 2…","Avaliando segmentação e lógica…","Analisando comunicação e testes…","Verificando priorização e postura…","Montando o seu resultado…"];
@@ -1603,7 +1633,12 @@ function renderServerList(){
   el.innerHTML='<div class="small muted" style="margin-bottom:8px">Clique num colaborador para ver as respostas:</div>'+
     list.map(function(c,i){ return '<button class="btn btn-ghost" style="margin:0 8px 8px 0" onclick="viewServer('+i+')">'+((c.nome||'Sem nome'))+' · '+((c.data||''))+'</button>'; }).join('');
 }
-function viewServer(i){ const c=(state.serverList||[])[i]; if(!c) return; state.importedTranscript=c.rows||[]; state.importedName=c.nome||'Colaborador'; state.importedMeta={data:c.data,email:c.email,indiceCase:c.indiceCase,indiceCase2:c.indiceCase2}; state.importedAval=c.avaliacaoIA||''; renderAnswers(); }
+function deleteAll(){
+  if(!listConfigured()){ flashProctor('Disponível apenas no modo servidor.'); return; }
+  if(!confirm('Apagar TODAS as respostas do servidor? Isso não pode ser desfeito. Use só para limpar dados de teste.')) return;
+  fetch(DB_LIST_URL,{method:'DELETE'}).then(function(r){return r.json();}).then(function(){ state.serverList=[]; renderServerList(); state.importedTranscript=null; state.importedMeta=null; state.importedAval=''; renderAnswers(); flashOK('Respostas apagadas.'); }).catch(function(){ flashProctor('Não consegui apagar. Verifique o login.'); });
+}
+function viewServer(i){ const c=(state.serverList||[])[i]; if(!c) return; state.importedTranscript=c.rows||[]; state.importedName=c.nome||'Colaborador'; state.importedMeta={data:c.data,email:c.email,indiceCase:c.indiceCase,indiceCase2:c.indiceCase2,integridade:c.integridade,tempoTotalSeg:c.tempoTotalSeg}; state.importedAval=c.avaliacaoIA||''; renderAnswers(); }
 function downloadDataFile(){
   const blob=new Blob([JSON.stringify(exportPayload())],{type:'application/json;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
@@ -1655,15 +1690,27 @@ function renderSendBox(){
     +'<button class="btn btn-primary" style="margin-top:12px" onclick="downloadDataFile()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#08131f" stroke-width="2.4"><path d="M12 3v12M7 11l5 5 5-5M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg> Baixar respostas para enviar ao RH</button>';
 }
 function renderAnswers(){
-  const nm=document.getElementById('answersName'); if(nm) nm.textContent = state.importedName || state.candNome || 'Colaborador Exemplo';
+  const nm=document.getElementById('answersName');
+  if(!state.importedTranscript && listConfigured()){
+    if(nm) nm.textContent='Nenhum colaborador selecionado';
+    const body=document.getElementById('answersBody'); if(body) body.innerHTML='<p class="muted" style="padding:22px 4px">Clique em <b style="color:var(--accent)">Carregar respostas do servidor</b> e selecione um nome para ver as respostas e o relatório da IA.</p>';
+    return;
+  }
+  if(nm) nm.textContent = state.importedName || state.candNome || 'Colaborador';
   const rows = state.importedTranscript || transcriptData();
   let head='';
   const m=state.importedMeta;
   if(m){
     head='<div class="casekpis" style="margin-bottom:18px">'
       +'<div class="k"><b>'+(m.data||'—')+'</b><span>Data da resposta</span></div>'
+      +'<div class="k"><b>'+fmtDur(m.tempoTotalSeg)+'</b><span>Tempo total do teste</span></div>'
       +'<div class="k"><b>'+(m.indiceCase||'—')+'</b><span>Índice Case 1 (0–100)</span></div>'
       +'<div class="k"><b>'+(m.indiceCase2||'—')+'</b><span>Índice Case 2 (0–100)</span></div>'
+      +'</div>';
+    var ig=m.integridade||{};
+    head+='<div class="casekpis" style="margin-bottom:18px">'
+      +'<div class="k"><b>'+(ig.tabAway!=null?ig.tabAway:'—')+'</b><span>Saídas de tela detectadas</span></div>'
+      +'<div class="k"><b>'+(ig.pasteBlocked!=null?ig.pasteBlocked:'—')+'</b><span>Tentativas de colar bloqueadas</span></div>'
       +'</div>';
   }
   if(state.importedAval){
@@ -1698,7 +1745,9 @@ function buildPayload(){
     rows: t,                 // [[rótulo, resposta], ...] — usado pela Área do Avaliador
     respostas: respostas,    // [{pergunta, resposta}] — formato tabela (planilha)
     indiceCase: state.caseIndex||'',
-    indiceCase2: (state.case2Quality!=null)? Math.round(state.case2Quality*100):''
+    indiceCase2: (state.case2Quality!=null)? Math.round(state.case2Quality*100):'',
+    tempoTotalSeg: state.durationSec||'',   // tempo total do teste, em segundos
+    integridade: { tabAway: proctor.tabAway||0, pasteBlocked: proctor.pasteBlocked||0 }  // trocas de tela e colagens bloqueadas
   };
 }
 function submitToDatabase(){
