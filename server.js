@@ -91,7 +91,12 @@ if (process.env.DATABASE_URL) {
       indice_case INTEGER, indice_case2 INTEGER,
       payload JSONB
     )
-  `).then(() => console.log('Postgres pronto.'))
+  `).then(() => {
+    // Coluna de CPF (para bloquear repetição) e tabela de liberação para refazer.
+    return pool.query('ALTER TABLE respostas ADD COLUMN IF NOT EXISTS cpf TEXT');
+  }).then(() => {
+    return pool.query('CREATE TABLE IF NOT EXISTS refazer_liberado (cpf TEXT PRIMARY KEY, criado_em TIMESTAMPTZ DEFAULT now())');
+  }).then(() => console.log('Postgres pronto.'))
     .catch(e => console.error('Erro ao iniciar o banco:', e.message));
 } else {
   console.log('Sem DATABASE_URL — usando armazenamento em arquivo (data.json). Adicione um Postgres no Railway para persistência garantida.');
@@ -102,11 +107,45 @@ function fileRead() { try { return JSON.parse(fs.readFileSync(FILE, 'utf8')); } 
 function fileWrite(arr) { fs.writeFileSync(FILE, JSON.stringify(arr)); }
 function toInt(v) { const n = parseInt(v, 10); return isNaN(n) ? null : n; }
 
+/* ---------------- Controle por CPF (uma vez por pessoa) ---------------- */
+const ALLOWFILE = path.join(__dirname, 'refazer.json');
+function fileReadAllow() { try { return JSON.parse(fs.readFileSync(ALLOWFILE, 'utf8')); } catch (e) { return []; } }
+function fileWriteAllow(arr) { fs.writeFileSync(ALLOWFILE, JSON.stringify(arr)); }
+function normCpf(v) { return String(v || '').replace(/\D/g, ''); }
+
+async function cpfJaFez(cpf) {
+  cpf = normCpf(cpf); if (!cpf) return false;
+  if (pool) { const r = await pool.query('SELECT 1 FROM respostas WHERE cpf=$1 LIMIT 1', [cpf]); return r.rowCount > 0; }
+  return fileRead().some(x => normCpf(x.cpf) === cpf);
+}
+async function cpfLiberado(cpf) {
+  cpf = normCpf(cpf); if (!cpf) return false;
+  if (pool) { const r = await pool.query('SELECT 1 FROM refazer_liberado WHERE cpf=$1 LIMIT 1', [cpf]); return r.rowCount > 0; }
+  return fileReadAllow().indexOf(cpf) >= 0;
+}
+async function podeFazer(cpf) {
+  cpf = normCpf(cpf);
+  if (cpf.length !== 11) return { podeFazer: false, motivo: 'CPF inválido' };
+  if (!(await cpfJaFez(cpf))) return { podeFazer: true };
+  if (await cpfLiberado(cpf)) return { podeFazer: true };
+  return { podeFazer: false, motivo: 'Este CPF já realizou o teste.' };
+}
+async function liberarRefazer(cpf) {
+  cpf = normCpf(cpf); if (!cpf) return;
+  if (pool) { await pool.query('INSERT INTO refazer_liberado (cpf) VALUES ($1) ON CONFLICT (cpf) DO NOTHING', [cpf]); }
+  else { const a = fileReadAllow(); if (a.indexOf(cpf) < 0) { a.push(cpf); fileWriteAllow(a); } }
+}
+async function consumirLiberacao(cpf) {
+  cpf = normCpf(cpf); if (!cpf) return;
+  if (pool) { await pool.query('DELETE FROM refazer_liberado WHERE cpf=$1', [cpf]); }
+  else { fileWriteAllow(fileReadAllow().filter(x => x !== cpf)); }
+}
+
 async function saveResposta(p) {
   if (pool) {
     await pool.query(
-      'INSERT INTO respostas (nome,email,data,indice_case,indice_case2,payload) VALUES ($1,$2,$3,$4,$5,$6)',
-      [p.nome || '', p.email || '', p.data || '', toInt(p.indiceCase), toInt(p.indiceCase2), p]
+      'INSERT INTO respostas (nome,email,data,cpf,indice_case,indice_case2,payload) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+      [p.nome || '', p.email || '', p.data || '', normCpf(p.cpf), toInt(p.indiceCase), toInt(p.indiceCase2), p]
     );
   } else {
     const arr = fileRead();
@@ -142,13 +181,44 @@ app.post('/api/respostas', async (req, res) => {
     let body = req.body;
     if (typeof body === 'string') body = JSON.parse(body || '{}');
     if (!body || typeof body !== 'object') return res.status(400).json({ ok: false });
+    const cpf = normCpf(body.cpf);
+    if (cpf) {                                   // bloqueio "uma vez por CPF" (a menos que liberado)
+      const check = await podeFazer(cpf);
+      if (!check.podeFazer) return res.status(409).json({ ok: false, erro: check.motivo || 'CPF já realizou o teste' });
+    }
     const ia = await avaliarComIA(body);        // avalia com a IA (se a chave estiver configurada)
     body.avaliacaoIA = ia.texto;
     if (ia.erro) { body.avaliacaoErro = ia.erro; console.error('IA:', ia.erro); }
     await saveResposta(body);
+    if (cpf) await consumirLiberacao(cpf);        // consome a liberação (vale para uma nova tentativa)
     res.json({ ok: true });
   } catch (e) {
     res.status(400).json({ ok: false, error: String(e) });
+  }
+});
+
+// Verifica se um CPF pode iniciar o teste (público) — usado antes de começar.
+app.post('/api/verificar', async (req, res) => {
+  try {
+    let body = req.body;
+    if (typeof body === 'string') body = JSON.parse(body || '{}');
+    res.json(await podeFazer(body && body.cpf));
+  } catch (e) {
+    res.status(400).json({ podeFazer: false, motivo: 'erro' });
+  }
+});
+
+// Libera um CPF para refazer o teste (protegido) — usado pelo avaliador.
+app.post('/api/liberar-refazer', auth, async (req, res) => {
+  try {
+    let body = req.body;
+    if (typeof body === 'string') body = JSON.parse(body || '{}');
+    const cpf = normCpf(body && body.cpf);
+    if (cpf.length !== 11) return res.status(400).json({ ok: false, erro: 'CPF inválido' });
+    await liberarRefazer(cpf);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ ok: false, erro: String(e) });
   }
 });
 
@@ -160,8 +230,8 @@ app.get('/api/respostas', auth, async (req, res) => {
 // Apagar TODAS as respostas (protegido) — usado para limpar dados de teste.
 app.delete('/api/respostas', auth, async (req, res) => {
   try {
-    if (pool) await pool.query('DELETE FROM respostas');
-    else fileWrite([]);
+    if (pool) { await pool.query('DELETE FROM respostas'); await pool.query('DELETE FROM refazer_liberado'); }
+    else { fileWrite([]); fileWriteAllow([]); }
     res.json({ ok: true });
   } catch (e) { res.status(500).json({ ok: false, error: String(e) }); }
 });
