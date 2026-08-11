@@ -42,7 +42,9 @@ const PROMPT_IA =
 "2) PONTOS A DESENVOLVER (até 3) com uma sugestão prática cada;\n" +
 "3) ADERÊNCIA POR ÁREA: para CADA área abaixo, dê uma nota de 0 a 100 (%) de compatibilidade com base nas evidências das respostas e uma frase curta justificando. Depois indique a ÁREA DE MAIOR ENCAIXE. Áreas da ETUS:\n" + AREAS_TXT + "\n" +
 "4) RESUMO em 3 linhas para o RH;\n" +
-"5) DEVOLUTIVA EMPÁTICA de 3 linhas para o(a) candidato(a).\n";
+"5) DEVOLUTIVA EMPÁTICA de 3 linhas para o(a) candidato(a).\n\n" +
+"Por fim, escreva uma ÚLTIMA linha isolada, exatamente neste formato (apenas o número, de 0 a 100), com a ADERÊNCIA GERAL do candidato à ETUS considerando o conjunto das áreas:\n" +
+"ADERENCIA_ETUS: NN\n";
 
 function respostasParaTexto(payload) {
   const rows = (payload && payload.rows) || [];
@@ -189,6 +191,8 @@ app.post('/api/respostas', async (req, res) => {
     const ia = await avaliarComIA(body);        // avalia com a IA (se a chave estiver configurada)
     body.avaliacaoIA = ia.texto;
     if (ia.erro) { body.avaliacaoErro = ia.erro; console.error('IA:', ia.erro); }
+    const mAd = (ia.texto || '').match(/ADER[ÊE]NCIA[_ ]?ETUS\s*[:=]?\s*(\d{1,3})/i);   // aderência geral (0-100)
+    if (mAd) body.aderenciaEtus = Math.max(0, Math.min(100, parseInt(mAd[1], 10)));
     await saveResposta(body);
     if (cpf) await consumirLiberacao(cpf);        // consome a liberação (vale para uma nova tentativa)
     res.json({ ok: true });
