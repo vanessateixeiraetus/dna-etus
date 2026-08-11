@@ -130,6 +130,14 @@
   textarea{width:100%;min-height:110px;resize:vertical;background:rgba(255,255,255,.03);border:1px solid var(--line-strong);border-radius:12px;padding:14px 16px;color:var(--txt);font-family:inherit;font-size:.98rem;line-height:1.55}
   textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,217,122,.15)}
   .ta-meta{display:flex;justify-content:space-between;font-size:.76rem;color:var(--muted);margin-top:7px}
+  .aval-rich{font-size:.92rem;line-height:1.6;color:#E7EEFC}
+  .aval-rich .av-h{color:#fff;font-size:1rem;margin:15px 0 5px}
+  .aval-rich .av-ul{margin:5px 0 11px 20px;padding:0}
+  .aval-rich .av-ul li{margin:4px 0}
+  .aval-rich p{margin:7px 0}
+  .aval-rich strong{color:#EAF0FA}
+  .aval-rich em{color:var(--accent);font-style:normal;font-weight:600}
+  .aval-rich hr{border:none;border-top:1px solid rgba(255,255,255,.12);margin:13px 0}
   .rank{display:grid;gap:10px}
   .ritem{display:flex;align-items:center;gap:14px;padding:12px 15px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);transition:.15s}
   .ritem .pos{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;font-weight:800;background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#08131f;font-size:.95rem}
@@ -1692,6 +1700,108 @@ function loadJSONP(){
   s.src=DB_LIST_URL + (DB_LIST_URL.indexOf('?')>=0?'&':'?') + 'callback='+cb;
   document.body.appendChild(s);
 }
+/* ============ ADERÊNCIA À ETUS (percentual único) ============ */
+function aderenciaEtusDe(c){
+  if(!c) return null;
+  if(typeof c.aderenciaEtus==='number') return Math.round(c.aderenciaEtus);
+  var av=c.avaliacaoIA||c.aval||'';
+  var m=av.match(/ADER[ÊE]NCIA[_ ]?ETUS\s*[:=]?\s*(\d{1,3})/i);
+  if(m) return Math.min(100,parseInt(m[1],10));
+  var idx=av.search(/ADER[ÊE]NCIA POR [ÁA]REA/i);
+  if(idx>=0){
+    var seg=av.slice(idx);
+    var nums=(seg.match(/(\d{1,3})\s*%/g)||[]).map(function(x){return parseInt(x,10);}).filter(function(n){return n>=0&&n<=100;});
+    if(nums.length) return Math.round(nums.reduce(function(a,b){return a+b;},0)/nums.length);
+  }
+  var i1=parseInt(c.indiceCase,10), i2=parseInt(c.indiceCase2,10), arr=[];
+  if(!isNaN(i1))arr.push(i1); if(!isNaN(i2))arr.push(i2);
+  if(arr.length) return Math.round(arr.reduce(function(a,b){return a+b;},0)/arr.length);
+  return null;
+}
+function aderColor(p){ if(p==null) return '#93A2BF'; if(p>=75) return '#25D97A'; if(p>=50) return '#F5C56B'; return '#FF7E6B'; }
+function aderBadge(p){
+  if(p==null) return '';
+  var c=aderColor(p);
+  return '<span style="display:inline-flex;align-items:center;padding:4px 11px;border-radius:999px;font-weight:800;font-size:.82rem;color:'+c+';background:'+c+'22;border:1px solid '+c+'66;white-space:nowrap">'+p+'% ETUS</span>';
+}
+
+/* ============ Markdown simples -> HTML (deixa a avaliação bonita) ============ */
+function mdInline(s){ return s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g,'$1<em>$2</em>'); }
+function mdToHtml(md){
+  if(!md) return '';
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  var lines=String(md).split('\n'), out=[], inList=false;
+  function closeList(){ if(inList){ out.push('</ul>'); inList=false; } }
+  for(var i=0;i<lines.length;i++){
+    var t=lines[i].trim();
+    if(t===''){ closeList(); continue; }
+    if(/^ADERENCIA_ETUS\s*[:=]/i.test(t)){ continue; }      /* linha técnica: não mostra */
+    if(/^-{3,}$/.test(t)){ closeList(); out.push('<hr>'); continue; }
+    if(/^#{1,6}\s+/.test(t)){ closeList(); out.push('<h4 class="av-h">'+mdInline(esc(t.replace(/^#{1,6}\s+/,'')))+'</h4>'); continue; }
+    if(/^[\*\-]\s+/.test(t)){ if(!inList){ out.push('<ul class="av-ul">'); inList=true; } out.push('<li>'+mdInline(esc(t.replace(/^[\*\-]\s+/,'')))+'</li>'); continue; }
+    closeList(); out.push('<p>'+mdInline(esc(t))+'</p>');
+  }
+  closeList();
+  return out.join('\n');
+}
+
+/* ============ PDF do resultado (relatório visual + respostas por bloco) ============ */
+function gerarPDF(){
+  var m=state.importedMeta||{}, nome=state.importedName||state.candNome||'Candidato';
+  var aval=state.importedAval||'', rows=state.importedTranscript||transcriptData();
+  var ader=aderenciaEtusDe({aderenciaEtus:m.aderenciaEtus, avaliacaoIA:aval, indiceCase:m.indiceCase, indiceCase2:m.indiceCase2});
+  var html=buildReportHTML(nome, m, aval, rows, ader);
+  var f=document.createElement('iframe');
+  f.style.position='fixed'; f.style.right='0'; f.style.bottom='0'; f.style.width='0'; f.style.height='0'; f.style.border='0'; f.setAttribute('aria-hidden','true');
+  document.body.appendChild(f);
+  var d=f.contentWindow.document; d.open(); d.write(html); d.close();
+  setTimeout(function(){ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){} setTimeout(function(){ try{f.remove();}catch(e){} }, 2000); }, 500);
+  flashOK('Abrindo a impressão — escolha "Salvar como PDF".');
+}
+function buildReportHTML(nome, m, aval, rows, ader){
+  m=m||{};
+  var esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var ig=m.integridade||{};
+  var kpi=function(v,l){ return '<div class="kpi"><b>'+esc(v)+'</b><span>'+esc(l)+'</span></div>'; };
+  var info=(m.cpf?kpi(fmtCpf(m.cpf),'CPF'):'')
+    + kpi(m.inicio||'—','Início')
+    + kpi(m.data||'—','Conclusão')
+    + kpi(fmtDur(m.tempoTotalSeg),'Tempo de preenchimento')
+    + kpi(m.indiceCase||'—','Índice Case 1')
+    + kpi(m.indiceCase2||'—','Índice Case 2')
+    + kpi(ig.tabAway!=null?ig.tabAway:'—','Saídas de tela')
+    + kpi(ig.pasteBlocked!=null?ig.pasteBlocked:'—','Colagens bloqueadas');
+  var col=aderColor(ader);
+  var aderBox = (ader==null) ? '' :
+    '<div class="ader"><div class="aderc" style="border-color:'+col+';color:'+col+'">'+ader+'%</div><div class="aderl">Aderência<br>à ETUS</div></div>';
+  var blocos='';
+  (rows||[]).forEach(function(r){
+    var q=r[0], a=r[1];
+    if(a===''){ blocos += '<h2 class="bloco">'+esc(String(q).replace(/__/g,''))+'</h2>'; }
+    else { blocos += '<div class="qa"><div class="q">'+esc(q)+'</div><div class="a">'+esc(a).replace(/\n/g,'<br>')+'</div></div>'; }
+  });
+  var logo='<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2.2"><path d="M5 4c9 4 9 12 14 16M19 4C10 8 10 16 5 20" stroke-linecap="round"/><path d="M8 6h8M9 10h6M9 14h6M8 18h8" stroke-linecap="round"/></svg>';
+  return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>DNA ETUS — '+esc(nome)+'</title><style>'
+    + '@page{margin:15mm 13mm;} *{box-sizing:border-box;} body{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#1a2233;margin:0;} '
+    + '.band{background:#0E1626;color:#fff;padding:20px 22px;border-radius:14px;display:flex;align-items:center;gap:14px;} .band h1{font-size:18px;margin:0;} .band .sub{color:#7ff0b6;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;} '
+    + '.name{font-size:25px;font-weight:800;margin:18px 0 2px;} '
+    + '.top{display:flex;gap:18px;align-items:center;justify-content:space-between;margin:12px 0 6px;} '
+    + '.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex:1;} .kpi{border:1px solid #e6eaf0;border-radius:10px;padding:7px 9px;} .kpi b{display:block;font-size:12.5px;} .kpi span{font-size:9.5px;color:#6b7688;} '
+    + '.ader{display:flex;flex-direction:column;align-items:center;gap:4px;} .aderc{border:6px solid;border-radius:50%;width:92px;height:92px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;} .aderl{font-size:10.5px;color:#6b7688;text-align:center;line-height:1.25;} '
+    + '.sec{margin-top:18px;} .sec-h{color:#12a55f;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid #d8f2e4;padding-bottom:6px;margin-bottom:8px;} '
+    + '.av-h{color:#0E1626;font-size:13.5px;margin:13px 0 3px;} .av-ul{margin:3px 0 8px 18px;padding:0;} .av-ul li{margin:2px 0;font-size:12px;line-height:1.5;} .sec p{font-size:12px;line-height:1.55;margin:4px 0;} .sec em{color:#12a55f;font-style:normal;font-weight:600;} hr{border:none;border-top:1px solid #eceef2;margin:9px 0;} '
+    + '.answers{page-break-before:always;} .bloco{color:#12a55f;font-size:15px;margin:15px 0 8px;border-left:4px solid #25D97A;padding-left:9px;} .qa{margin:0 0 9px;} .qa .q{font-weight:700;font-size:12px;} .qa .a{font-size:12px;color:#33405a;border:1px solid #eceef2;border-radius:8px;padding:7px 9px;margin-top:3px;} '
+    + '.foot{margin-top:18px;color:#9aa4b4;font-size:9.5px;text-align:center;} '
+    + '</style></head><body>'
+    + '<div class="band">'+logo+'<div><div class="sub">DNA ETUS · Assessment</div><h1>Relatório de Avaliação</h1></div></div>'
+    + '<div class="name">'+esc(nome)+'</div>'
+    + '<div class="top"><div class="kpis">'+info+'</div>'+aderBox+'</div>'
+    + '<div class="sec"><div class="sec-h">Avaliação por IA</div>'+mdToHtml(aval)+'</div>'
+    + '<div class="answers"><div class="sec-h">Respostas por bloco</div>'+blocos+'</div>'
+    + '<div class="foot">DNA ETUS · Documento gerado para uso interno do RH · Confidencial</div>'
+    + '</body></html>';
+}
+
 function renderServerList(){
   const el=document.getElementById('serverList'); if(!el) return;
   const list=state.serverList||[];
@@ -1699,10 +1809,12 @@ function renderServerList(){
   el.innerHTML='<div class="small muted" style="margin-bottom:8px">Clique num colaborador para ver as respostas:</div>'+
     list.map(function(c,i){
       var label=(c.nome||'Sem nome')+' · '+(c.data||'')+(c.cpf?' · CPF '+fmtCpf(c.cpf):'');
+      var badge=aderBadge(aderenciaEtusDe(c));
       var refazer = c.cpf ? '<button class="btn btn-ghost" style="margin:0 8px 8px 0;border-color:rgba(245,197,107,.45);color:#F5C56B" onclick="liberarRefazer('+i+')">Permitir refazer</button>' : '';
-      return '<div style="display:flex;gap:0;align-items:center;flex-wrap:wrap">'
-        +'<button class="btn btn-ghost" style="margin:0 8px 8px 0" onclick="viewServer('+i+')">'+label+'</button>'
-        +refazer+'</div>';
+      return '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px">'
+        +'<button class="btn btn-ghost" style="margin:0 0 8px 0" onclick="viewServer('+i+')">'+label+'</button>'
+        +(badge?'<span style="margin:0 0 8px 0">'+badge+'</span>':'')
+        +'<span style="margin:0 0 8px 0">'+refazer+'</span></div>';
     }).join('');
 }
 /* Avaliador libera um CPF para refazer o teste (a tentativa atual fica no histórico). */
@@ -1721,7 +1833,7 @@ function deleteAll(){
   if(!confirm('Apagar TODAS as respostas do servidor? Isso não pode ser desfeito. Use só para limpar dados de teste.')) return;
   fetch(DB_LIST_URL,{method:'DELETE'}).then(function(r){return r.json();}).then(function(){ state.serverList=[]; renderServerList(); state.importedTranscript=null; state.importedMeta=null; state.importedAval=''; renderAnswers(); flashOK('Respostas apagadas.'); }).catch(function(){ flashProctor('Não consegui apagar. Verifique o login.'); });
 }
-function viewServer(i){ const c=(state.serverList||[])[i]; if(!c) return; state.importedTranscript=c.rows||[]; state.importedName=c.nome||'Colaborador'; state.importedMeta={data:c.data,inicio:c.inicio,email:c.email,cpf:c.cpf,indiceCase:c.indiceCase,indiceCase2:c.indiceCase2,integridade:c.integridade,tempoTotalSeg:c.tempoTotalSeg}; state.importedAval=c.avaliacaoIA||''; renderAnswers(); }
+function viewServer(i){ const c=(state.serverList||[])[i]; if(!c) return; state.importedTranscript=c.rows||[]; state.importedName=c.nome||'Colaborador'; state.importedMeta={data:c.data,inicio:c.inicio,email:c.email,cpf:c.cpf,indiceCase:c.indiceCase,indiceCase2:c.indiceCase2,integridade:c.integridade,tempoTotalSeg:c.tempoTotalSeg,aderenciaEtus:c.aderenciaEtus}; state.importedAval=c.avaliacaoIA||''; renderAnswers(); }
 function downloadDataFile(){
   const blob=new Blob([JSON.stringify(exportPayload())],{type:'application/json;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
@@ -1783,8 +1895,13 @@ function renderAnswers(){
   const rows = state.importedTranscript || transcriptData();
   let head='';
   const m=state.importedMeta;
+  var aderGeral = aderenciaEtusDe({aderenciaEtus:(m&&m.aderenciaEtus), avaliacaoIA:state.importedAval, indiceCase:(m&&m.indiceCase), indiceCase2:(m&&m.indiceCase2)});
+  head += '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">'
+    + '<div>'+(aderGeral!=null?aderBadge(aderGeral)+' <span class="small muted">aderência geral à ETUS</span>':'')+'</div>'
+    + '<button class="btn btn-primary" onclick="gerarPDF()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#08131f" stroke-width="2.2" style="vertical-align:-2px;margin-right:4px"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" stroke-linecap="round" stroke-linejoin="round"/></svg>Baixar PDF</button>'
+    + '</div>';
   if(m){
-    head='<div class="casekpis" style="margin-bottom:18px">'
+    head+='<div class="casekpis" style="margin-bottom:18px">'
       +(m.cpf?'<div class="k"><b>'+fmtCpf(m.cpf)+'</b><span>CPF</span></div>':'')
       +'<div class="k"><b>'+(m.inicio||'—')+'</b><span>Início do preenchimento</span></div>'
       +'<div class="k"><b>'+(m.data||'—')+'</b><span>Conclusão</span></div>'
@@ -1799,10 +1916,9 @@ function renderAnswers(){
       +'</div>';
   }
   if(state.importedAval){
-    var av=String(state.importedAval).replace(/&/g,'&amp;').replace(/</g,'&lt;');
     head += '<div class="cr-block" style="border-color:rgba(37,217,122,.4);background:rgba(37,217,122,.05);margin-bottom:18px">'
       +'<h3 style="margin-bottom:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2"><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2h6c0-.8.4-1.5 1-2A7 7 0 0 0 12 2Z"/><path d="M9 18h6M10 22h4" stroke-linecap="round"/></svg> Avaliação por IA</h3>'
-      +'<div style="white-space:pre-wrap;font-size:.92rem;line-height:1.55;color:#E7EEFC">'+av+'</div></div>';
+      +'<div class="aval-rich">'+mdToHtml(state.importedAval)+'</div></div>';
   }
   document.getElementById('answersBody').innerHTML = head + rows.map(([q,a])=> a===''
     ? `<h4 style="color:var(--accent);letter-spacing:.5px;margin:20px 0 8px">${q.replace('__','')}</h4>`
