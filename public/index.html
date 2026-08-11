@@ -138,6 +138,7 @@
   .aval-rich strong{color:#EAF0FA}
   .aval-rich em{color:var(--accent);font-style:normal;font-weight:600}
   .aval-rich hr{border:none;border-top:1px solid rgba(255,255,255,.12);margin:13px 0}
+  .anstema{font-size:.72rem;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);opacity:.85;margin-bottom:3px}
   .rank{display:grid;gap:10px}
   .ritem{display:flex;align-items:center;gap:14px;padding:12px 15px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.03);transition:.15s}
   .ritem .pos{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;font-weight:800;background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#08131f;font-size:.95rem}
@@ -246,7 +247,7 @@
   .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#2a1620;border:1px solid rgba(255,126,107,.5);color:#FFD9CF;padding:12px 18px;border-radius:12px;font-size:.86rem;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:90%}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .ansitem{padding:12px 0;border-bottom:1px solid var(--line)}
-  .ansq{font-size:.82rem;color:var(--muted);margin-bottom:5px;font-weight:600}
+  .ansq{font-size:.95rem;color:#EAF0FA;margin-bottom:7px;font-weight:600;line-height:1.45}
   .ansa{font-size:.95rem;color:var(--txt);white-space:pre-wrap;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
   .howcard.tri{grid-template-columns:repeat(3,1fr)}
   .funnel{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0 6px}
@@ -1700,6 +1701,45 @@ function loadJSONP(){
   s.src=DB_LIST_URL + (DB_LIST_URL.indexOf('?')>=0?'&':'?') + 'callback='+cb;
   document.body.appendChild(s);
 }
+/* ============ Enunciado completo de cada pergunta (por rótulo) ============ */
+var PERGUNTAS = {
+  'Sequência lógica (2·6·12·20·30·?)':'Qual número completa a sequência? 2 · 6 · 12 · 20 · 30 · ?',
+  'Regra de três (e-mails)':'Uma equipe de 4 pessoas envia 2.000 e-mails em 5 dias, sempre no mesmo ritmo. Quantos e-mails 6 pessoas enviariam em 10 dias?',
+  'Cliente insatisfeito':'Um cliente importante recebeu um relatório com um erro de dados que passou pela equipe. Ele está furioso e ameaça cancelar o contrato ainda hoje. Qual é o seu primeiro passo e como conduz isso até o fim?',
+  'Conflito entre áreas':'Duas áreas discordam sobre a prioridade de uma entrega e o clima esquentou. Você precisa destravar a situação para o trabalho fluir. Como você age?',
+  'Manhã com 5 urgências':'Priorização — coloque na ordem em que você agiria: sua manhã tem 5 urgências.',
+  'Quatro projetos':'Priorização — coloque na ordem em que você agiria: quatro projetos na mesa.',
+  'Queda de indicadores':'Os indicadores de um cliente caíram 30% no último mês. Antes de propor solução, quais perguntas você faria? (seleção de perguntas)',
+  'Novo processo na área':'A liderança quer implantar um novo processo na sua área. Antes de opinar, quais perguntas você faria? (seleção de perguntas)',
+  'Tendência de engajamento':'Interpretação de dados: com base no gráfico de engajamento mensal do cliente (com investimento em mídia constante), o que os números indicam?',
+  'Funil de conversão':'Interpretação de dados: com base no funil de conversão da campanha (do total de visitantes até a compra), qual é a principal conclusão?',
+  'Erro que favorece a equipe — escolha':'Você percebe um erro em um relatório que, por acaso, favorece os números da sua equipe. Ninguém mais percebeu, e corrigir vai expor uma falha do time. O que você faz?',
+  'Informação privilegiada — escolha':'Um colega te passa, sem querer, uma informação que poderia te dar vantagem numa avaliação interna. Ninguém saberá se você usar. O que você faz?',
+  '…por quê':'E o mais importante: por quê? Explique o raciocínio da sua escolha.',
+  'Q1 · Hipóteses':'Liste o maior número possível de hipóteses para o anúncio não estar vendendo. Não se preocupe em acertar; quanto mais hipóteses relevantes, melhor.',
+  'Q2 · Priorização':'Você só pode investigar 3 coisas primeiro. Quais seriam? E por quê?',
+  'Q3 · Perguntas':'Você pode conversar com o dono da empresa por 5 minutos. Liste até 10 perguntas que faria.',
+  'Q4 · Decisão':'Você pode mudar apenas UMA coisa. O que mudaria primeiro? Explique.',
+  'Q5 · Persistência':'Passou uma semana e nada mudou. O que você faria agora?',
+  'Q6 · Comunicação':'Explique, como se estivesse falando para a sua avó: o que é um anúncio na internet e por que algumas pessoas compram e outras não?',
+  'Q7 · Teste':'Seu gestor diz: "Não sabemos onde está o problema." O que você faria?',
+  'Q8 · Cálculo':'Usando os números do anúncio (120.000 pessoas, 2.800 cliques, 4 compras, R$ 2.000 investidos, produto a R$ 149), calcule e mostre as contas: a) taxa de cliques; b) taxa de conversão; c) custo por venda. Depois, em uma frase: o que mais te preocupa nesses números?',
+  'Q9 · Dados':'Você recebeu uma planilha enorme, com dezenas de números que nunca viu antes. O que faria antes de sair tomando decisões?',
+  'T1 · Motivo do desinteresse':'Uma empresa investe bastante em anúncios para trazer novas pessoas ao site, mas quase ninguém volta depois do primeiro dia. Qual pode ser o motivo desse desinteresse logo após o primeiro contato?',
+  'T1 · Manter interesse dos novos contatos':'Se o time de Aquisição trouxer milhares de novos contatos para a base hoje, o que você faria primeiro para garantir que continuem interessados nas mensagens nos próximos meses?',
+  'T2 · Critérios de engajamento':'Você precisa enviar uma mensagem promocional apenas para clientes altamente engajados. Quais critérios ou comportamentos usaria para definir quem deve (e quem não deve) receber esse e-mail?',
+  'T2 · Grupo A (E) x Grupo B (OU)':'Grupo A: usaram o app nos últimos 7 dias E fizeram uma compra. Grupo B: usaram o app nos últimos 7 dias OU fizeram uma compra. Qual grupo terá um público maior? Explique o porquê.',
+  'T3 · Dois assuntos de e-mail':'Você precisa enviar um e-mail recomendando um novo cartão de crédito. Escreva duas opções de assunto para testar qual chama mais a atenção e explique a estratégia por trás de cada uma.',
+  'T3 · Teste justo? (horários)':'Se você envia dois e-mails diferentes para testar qual performa melhor, mas um é enviado às 8h de segunda e o outro às 22h de domingo, o resultado do teste será justo? Por quê?',
+  'T4 · Abertura alta, clique baixo':'A taxa de abertura mede quantos abriram o e-mail; a de clique mede quantos clicaram no link interno. Se um e-mail teve abertura altíssima mas quase nenhum clique no conteúdo, o que pode ter dado errado?',
+  'T4 · Metade da base não recebeu':'Você programou uma mensagem importante para um grupo de clientes. No dia seguinte, percebeu que menos da metade da base recebeu. Quais hipóteses você levantaria para investigar o que aconteceu?',
+  'T5 · Checklist antes de enviar':'Antes de apertar o botão "Enviar" em uma campanha de e-mail para milhares de pessoas, qual checklist pessoal você faria para garantir que nenhum erro seja disparado?',
+  'T5 · Ordem das 3 tarefas':'Três tarefas no dia: (a) ajustar um erro de digitação em um e-mail que sai daqui a 3 dias; (b) resolver uma automação disparando e-mails duplicados agora; (c) montar o relatório da semana passada. Em qual ordem você executaria e por quê?',
+  'T6 · Aprender ferramenta nova':'Como você costuma se organizar para aprender a mexer em um sistema ou ferramenta interna complexa que nunca viu antes?',
+  'T6 · Algo que não saiu como esperado':'A área de Retenção exige testes constantes e nem toda ideia dá certo. Conte uma situação em que algo que você planejou não saiu como o esperado. Como você reagiu e o que aprendeu?'
+};
+function perguntaDe(label){ return PERGUNTAS[label] || label; }
+
 /* ============ ADERÊNCIA À ETUS (percentual único) ============ */
 function aderenciaEtusDe(c){
   if(!c) return null;
@@ -1778,7 +1818,7 @@ function buildReportHTML(nome, m, aval, rows, ader){
   (rows||[]).forEach(function(r){
     var q=r[0], a=r[1];
     if(a===''){ blocos += '<h2 class="bloco">'+esc(String(q).replace(/__/g,''))+'</h2>'; }
-    else { blocos += '<div class="qa"><div class="q">'+esc(q)+'</div><div class="a">'+esc(a).replace(/\n/g,'<br>')+'</div></div>'; }
+    else { blocos += '<div class="qa"><div class="tema">'+esc(q)+'</div><div class="q">'+esc(perguntaDe(q))+'</div><div class="a">'+esc(a).replace(/\n/g,'<br>')+'</div></div>'; }
   });
   var logo='<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#25D97A" stroke-width="2.2"><path d="M5 4c9 4 9 12 14 16M19 4C10 8 10 16 5 20" stroke-linecap="round"/><path d="M8 6h8M9 10h6M9 14h6M8 18h8" stroke-linecap="round"/></svg>';
   return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>DNA ETUS — '+esc(nome)+'</title><style>'
@@ -1790,7 +1830,7 @@ function buildReportHTML(nome, m, aval, rows, ader){
     + '.ader{display:flex;flex-direction:column;align-items:center;gap:4px;} .aderc{border:6px solid;border-radius:50%;width:92px;height:92px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;} .aderl{font-size:10.5px;color:#6b7688;text-align:center;line-height:1.25;} '
     + '.sec{margin-top:18px;} .sec-h{color:#12a55f;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid #d8f2e4;padding-bottom:6px;margin-bottom:8px;} '
     + '.av-h{color:#0E1626;font-size:13.5px;margin:13px 0 3px;} .av-ul{margin:3px 0 8px 18px;padding:0;} .av-ul li{margin:2px 0;font-size:12px;line-height:1.5;} .sec p{font-size:12px;line-height:1.55;margin:4px 0;} .sec em{color:#12a55f;font-style:normal;font-weight:600;} hr{border:none;border-top:1px solid #eceef2;margin:9px 0;} '
-    + '.answers{page-break-before:always;} .bloco{color:#12a55f;font-size:15px;margin:15px 0 8px;border-left:4px solid #25D97A;padding-left:9px;} .qa{margin:0 0 9px;} .qa .q{font-weight:700;font-size:12px;} .qa .a{font-size:12px;color:#33405a;border:1px solid #eceef2;border-radius:8px;padding:7px 9px;margin-top:3px;} '
+    + '.answers{page-break-before:always;} .bloco{color:#12a55f;font-size:15px;margin:15px 0 8px;border-left:4px solid #25D97A;padding-left:9px;} .qa{margin:0 0 11px;} .qa .tema{font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:#12a55f;margin-bottom:2px;} .qa .q{font-weight:700;font-size:12px;color:#1a2233;} .qa .a{font-size:12px;color:#33405a;border:1px solid #eceef2;border-radius:8px;padding:7px 9px;margin-top:4px;} '
     + '.foot{margin-top:18px;color:#9aa4b4;font-size:9.5px;text-align:center;} '
     + '</style></head><body>'
     + '<div class="band">'+logo+'<div><div class="sub">DNA ETUS · Assessment</div><h1>Relatório de Avaliação</h1></div></div>'
@@ -1922,7 +1962,7 @@ function renderAnswers(){
   }
   document.getElementById('answersBody').innerHTML = head + rows.map(([q,a])=> a===''
     ? `<h4 style="color:var(--accent);letter-spacing:.5px;margin:20px 0 8px">${q.replace('__','')}</h4>`
-    : `<div class="ansitem"><div class="ansq">${q}</div><div class="ansa">${(a||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div></div>`).join('');
+    : `<div class="ansitem"><div class="anstema">${q}</div><div class="ansq">${perguntaDe(q).replace(/&/g,'&amp;').replace(/</g,'&lt;')}</div><div class="ansa">${(a||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div></div>`).join('');
 }
 
 /* ============ BANCO DE DADOS (envio automático) ============ */
